@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deep Impact Cube - DFV Awareness</title>
+    <!-- Tailwind CSS for styling --><script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* BRAND COLORS: #C6B4D9, #513873, #413659, #F2F2F2, #9C7F9D */
+        body {
+            font-family: 'Inter', sans-serif;
+            perspective: 1000px; /* For 3D effect */
+            background-color: #F5F5F5; /* Very Light Grey Background */
+            color: #413659; /* Dark Eggplant Text for contrast */
+        }
+
+        .cube-container {
+            width: 200px;
+            height: 200px;
+            position: relative;
+            /* Final Margin adjustment: 40px top, 70px bottom for extra space */
+            margin: 40px auto 70px auto; 
+            transform-style: preserve-3d;
+            animation: rotateCube 15s infinite linear; /* Gentle continuous rotation */
+            /* Add an ID to easily target for pausing */
+        }
+
+        /* PAUSE ROTATION ON HOVER/TOUCH */
+        .cube-container:hover {
+            animation-play-state: paused;
+        }
+
+        .cube-face {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            border: 2px solid #9C7F9D; /* Muted Rose Border */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem; 
+            font-weight: bold;
+            background-color: rgba(81, 56, 115, 0.7); /* Deep Violet with transparency */
+            border-radius: 8px; /* Slightly rounded edges */
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+            backface-visibility: hidden; /* Hide the back of the face */
+            padding: 5px; 
+            line-height: 1.2; 
+            cursor: pointer; /* Indicate face is clickable */
+            transition: transform 0.2s, background 0.2s;
+        }
+
+        .cube-face:hover {
+            transform: scale(1.05); /* Visual feedback */
+            background-color: #513873; /* Solid Deep Violet on hover */
+        }
+
+        /* Cube Face Color Assignment (using brand gradients for depth) */
+        .cube-face.front  { transform: rotateY(0deg) translateZ(100px); background: linear-gradient(135deg, #C6B4D9, #9C7F9D); } 
+        .cube-face.back   { transform: rotateY(180deg) translateZ(100px); background: linear-gradient(135deg, #513873, #9C7F9D); } 
+        .cube-face.right  { transform: rotateY(90deg) translateZ(100px); background: linear-gradient(135deg, #C6B4D9, #513873); } 
+        .cube-face.left   { transform: rotateY(-90deg) translateZ(100px); background: linear-gradient(135deg, #9C7F9D, #513873); } 
+        .cube-face.top    { transform: rotateX(90deg) translateZ(100px); background: linear-gradient(135deg, #C6B4D9, #413659); } 
+        .cube-face.bottom { transform: rotateX(-90deg) translateZ(100px); background: linear-gradient(135deg, #513873, #413659); } 
+        
+        .cube-face span {
+            color: white; 
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.4);
+            display: inline-block;
+            text-align: center; 
+        }
+
+        /* Keyframe for continuous rotation */
+        @keyframes rotateCube {
+            0%   { transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg); }
+            100% { transform: rotateX(360deg) rotateY(360deg) rotateZ(360deg); }
+        }
+
+        /* Pop-out content animation */
+        .content-box {
+            background-color: #513873; /* Deep Violet */
+            border: 1px solid #9C7F9D; /* Muted Rose */
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-top: 20px; 
+            min-height: 120px; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+        }
+
+        .pop-out {
+            opacity: 0;
+            transform: translateY(20px) scale(0.9);
+            transition: opacity 0.4s ease-out, transform 0.4s ease-out;
+        }
+
+        .pop-in {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        h1 {
+            color: #513873; 
+        }
+        p {
+            color: #413659; 
+        }
+        #content-text {
+            color: #F2F2F2; 
+        }
+
+        /* Progress Bar Styling */
+        .progress-container {
+            width: 200px;
+            height: 10px;
+            background-color: #C6B4D9; /* Light Lavender */
+            border-radius: 5px;
+            margin: 0 auto; 
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background-color: #513873; /* Deep Violet */
+            transition: width 0.4s ease-in-out;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center justify-center min-h-screen p-4">
+
+    <h1 class="text-4xl font-extrabold text-center mb-8 fade-in">Deep Impact of DFV</h1>
+    <p class="text-lg text-center mb-10 max-w-2xl fade-in">
+        Domestic and Family Violence has a profound impact across every facet of a person's life. 
+        Select a face of the cube to reveal its details.
+    </p>
+    
+    <!-- The 3D Cube --><div class="cube-container" id="interactive-cube">
+        <!-- Added data-impact attributes for direct mapping -->
+        <div class="cube-face front" data-impact="Physical Health"><span>Physical Health</span></div>
+        <div class="cube-face back" data-impact="Mental Health"><span>Mental Health</span></div>
+        <div class="cube-face right" data-impact="Social Isolation"><span>Social Isolation</span></div>
+        <div class="cube-face left" data-impact="Financial"><span>Financial</span></div>
+        <div class="cube-face top" data-impact="Self-Worth"><span>Self-Worth</span></div>
+        <div class="cube-face bottom" data-impact="Legal"><span>Legal</span></div>
+    </div>
+
+    <!-- Progress Indicator (Moved above content box) -->
+    <div class="progress-container">
+        <div id="progress-bar" class="progress-bar"></div>
+    </div>
+
+    <!-- Content Display Area --><div id="content-display" class="w-full max-w-lg content-box">
+        <p id="content-text" class="text-xl font-medium pop-in"></p>
+    </div>
+
+
+    <script>
+        // Changed to an object for direct key lookup
+        const IMPACT_DETAILS = {
+            "Physical Health": "<strong>Physical Health:</strong> This includes direct injuries from assaults, but also long-term issues like chronic pain, digestive problems, migraines, and difficulty sleeping.",
+            "Mental Health": "<strong>Mental Health:</strong> Victim-survivors often suffer from Anxiety, Depression, Post-Traumatic Stress Disorder (PTSD), and suicidal thoughts. The constant stress of living in fear or under control can lead to serious mental illness.",
+            "Social Isolation": "<strong>Social Isolation:</strong> The person using violence often works to isolate the victim from their friends, family, and support networks. This leaves the victim feeling alone, cut off, and without anyone to turn to for help.",
+            "Financial": "<strong>Financial/Economic Hardship:</strong> The victim may have their money controlled (economic abuse), be prevented from working, or be forced to leave their job. This can lead to homelessness and poverty, making it very hard to leave the relationship.",
+            "Self-Worth": "<strong>Loss of Self-Worth:</strong> Constant abuse, criticism, and control can destroy a person's self-esteem and confidence, leading to feelings of shame, guilt, and hopelessness.",
+            "Legal": "<strong>Legal and Systematic Barriers:</strong> Navigating complex legal systems, dealing with court processes, difficulties with housing, employment, and accessing support services due to systemic failures."
+        };
+
+        const TOTAL_IMPACTS = Object.keys(IMPACT_DETAILS).length;
+        // Use a Set to track non-sequential viewing
+        const viewedImpacts = new Set();
+        
+        const cube = document.getElementById('interactive-cube');
+        const contentText = document.getElementById('content-text');
+        const progressBar = document.getElementById('progress-bar');
+        const cubeFaces = document.querySelectorAll('.cube-face');
+
+
+        /**
+         * Updates the displayed content with a pop-out/pop-in animation.
+         * @param {string} text The HTML content to display.
+         */
+        async function updateContent(text) {
+            // Disable selections during transition
+            cubeFaces.forEach(face => face.style.pointerEvents = 'none');
+
+            // 1. Pop out current content
+            contentText.classList.remove('pop-in');
+            contentText.classList.add('pop-out');
+            
+            // Wait for transition to complete
+            await new Promise(resolve => setTimeout(resolve, 400)); 
+
+            // 2. Update content and pop in new content
+            contentText.innerHTML = text;
+            contentText.classList.remove('pop-out');
+            contentText.classList.add('pop-in');
+
+            // Re-enable selections after content has popped in
+            setTimeout(() => {
+                cubeFaces.forEach(face => face.style.pointerEvents = 'auto');
+            }, 500); // Allow time for full animation cycle
+        }
+
+        /**
+         * Updates the progress bar visually based on the number of unique impacts viewed.
+         */
+        function updateProgressBar() {
+            const progress = viewedImpacts.size;
+            const percentage = (progress / TOTAL_IMPACTS) * 100;
+            progressBar.style.width = `${percentage}%`;
+        }
+
+
+        /**
+         * Handles the click event on a specific cube face.
+         * @param {Event} event The click event triggered on a .cube-face element.
+         */
+        async function handleFaceClick(event) {
+            const impactKey = event.currentTarget.dataset.impact;
+            const content = IMPACT_DETAILS[impactKey];
+            
+            if (content) {
+                // 1. Display the selected impact
+                await updateContent(content);
+                
+                // 2. Track view and update progress
+                viewedImpacts.add(impactKey);
+                updateProgressBar();
+            }
+        }
+
+        // Initialize: display initial message
+        updateContent("Select a face on the spinning cube to reveal the details of that impact.");
+        updateProgressBar(); 
+
+        // Add event listeners to all cube faces
+        cubeFaces.forEach(face => {
+            face.addEventListener('click', handleFaceClick);
+            // This is crucial for touch devices and also ensures pointer events are enabled
+            face.style.pointerEvents = 'auto'; 
+        });
+
+    </script>
+</body>
+</html>
